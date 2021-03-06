@@ -110,4 +110,9 @@ def getOneIntervention():
     return jsonify(results)
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return "<h1>404</h1><p>Il y a une erreur dans l'url.</p>", 404
+
+
 app.run()
