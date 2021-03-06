@@ -5,39 +5,45 @@ from entities.technicien import Technicien
 from repositories.technicienRepository import technicienRepository
 from repositories.interventionRepository import intervientionRepository
 
-try:
-    # Connexion BDD ----------------------------------------------------------
 
-    os.remove("maBase.db")
-    connexion = sqlite3.connect("maBase.db")
-    curseur = connexion.cursor()
+def CreationBDD():
+    try:
+        # Connexion BDD ----------------------------------------------------------
 
-    # Create Table ----------------------------------------------------------
+        os.remove("maBase.db")
+        connexion = sqlite3.connect("maBase.db")
+        curseur = connexion.cursor()
 
-    intervientionRepository.createIntervention()
-    technicienRepository.createTechnicien()
+        # Create Table ----------------------------------------------------------
 
-    # InsertToTable ----------------------------------------------------------
+        intervientionRepository.createIntervention()
+        technicienRepository.createTechnicien()
 
-    inter1 = Intervention(1, "test", "test")
-    inter2 = Intervention(1, "test2", "test2")
-    inter3 = Intervention(2, "test3", "test3")
-    inter4 = Intervention(2, "test3", "test3")
-    inter5 = Intervention(3, "test3", "test3")
+        # InsertToTable ----------------------------------------------------------
 
-    list(map(intervientionRepository.insertIntervention, (inter1, inter2, inter3, inter4, inter5)))
+        inter1 = Intervention(1, "test", "test")
+        inter2 = Intervention(1, "test2", "test2")
+        inter3 = Intervention(2, "test3", "test3")
+        inter4 = Intervention(2, "test4", "test4")
+        inter5 = Intervention(3, "test5", "test5")
+        inter6 = Intervention(3, "test6", "test6")
 
-    tec1 = Technicien("Michel", "Dupont")
-    tec2 = Technicien("Paul", "Antoine")
-    tec3 = Technicien("test", "test")
+        list(map(intervientionRepository.insertIntervention, (inter1, inter2, inter3, inter4, inter5, inter6)))
 
-    list(map(technicienRepository.insertTechnicien, (tec1, tec2, tec3)))
+        tec1 = Technicien("Michel", "Dupont")
+        tec2 = Technicien("Paul", "Antoine")
+        tec3 = Technicien("test", "test")
 
-    # SelectToTable ----------------------------------------------------------
+        list(map(technicienRepository.insertTechnicien, (tec1, tec2, tec3)))
 
-    intervientionRepository.selectIntervention()
+        # SelectToTable ----------------------------------------------------------
 
-    technicienRepository.selectTechnicien()
+        intervientionRepository.selectIntervention()
 
-except Exception as exc:
-    print(exc)
+        technicienRepository.selectTechnicien()
+
+    except Exception as exc:
+        print(exc)
+
+
+CreationBDD()
