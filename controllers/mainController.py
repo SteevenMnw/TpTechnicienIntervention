@@ -10,13 +10,6 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-
-
 @app.route('/api/technicien/all', methods=['GET'])
 def test():
     return jsonify(technicienRepository.selectTechnicien())
@@ -104,10 +97,6 @@ def createTechnicien():
 
     return "OK"
 
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return "<h1>404</h1><p>Il y a une erreur dans l'url.</p>", 404
 
 @app.errorhandler(404)
 def page_not_found(e):
