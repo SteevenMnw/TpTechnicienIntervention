@@ -1,37 +1,39 @@
 import sqlite3
 
-from entities.technicien import Technicien
+from definitions import DB_PATH
+from repositories.utils import dict_factory
 
 
 class technicienRepository:
 
     @staticmethod
     def insertTechnicien(tec):
-        connexion = sqlite3.connect("maBase.db")
+        connexion = sqlite3.connect(DB_PATH)
         curseur = connexion.cursor()
-        cmd = f"INSERT INTO technicien (nom, prenom) VALUES ('{tec.nom}','{tec.prenom}')"
-        curseur.execute(cmd)
+        cmd = f"INSERT INTO technicien (nom, prenom) VALUES (?, ?)"
+        curseur.execute(cmd, [tec.nom, tec.prenom])
         connexion.commit()
 
     @staticmethod
     def selectTechnicien():
-        connexion = sqlite3.connect("maBase.db")
+        connexion = sqlite3.connect(DB_PATH)
+        connexion.row_factory = dict_factory
         curseur = connexion.cursor()
         cmd = "SELECT * FROM technicien"
-        curseur.execute(cmd)
-        lstTechnicien = []
+        return curseur.execute(cmd).fetchall()
 
-        print()
-        print("Les Techniciens :")
-        for row in curseur:
-            lstTechnicien.append(Technicien(row[1], row[2]))
+    @staticmethod
+    def selectTechnicienById(id):
+        connexion = sqlite3.connect(DB_PATH)
+        connexion.row_factory = dict_factory
+        curseur = connexion.cursor()
+        cmd = " SELECT * FROM technicien WHERE id_tec = ?"
+        return curseur.execute(cmd, [id]).fetchall()
 
-        for elem in lstTechnicien:
-            print(f"{elem.nom} - {elem.prenom}")
 
     @staticmethod
     def createTechnicien():
-        connexion = sqlite3.connect("maBase.db")
+        connexion = sqlite3.connect(DB_PATH)
         curseur = connexion.cursor()
         sqlCreateTableTechnicien = f"CREATE TABLE IF NOT EXISTS technicien(" \
                                    f" id_tec INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE," \
