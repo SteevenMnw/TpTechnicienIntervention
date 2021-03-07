@@ -1,6 +1,10 @@
 import flask
 from flask import request, jsonify
-import sqlite3
+
+from entities.intervention import Intervention
+from entities.technicien import Technicien
+from repositories.technicienRepository import technicienRepository
+from repositories.interventionRepository import intervientionRepository
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -15,12 +19,7 @@ def dict_factory(cursor, row):
 
 @app.route('/api/technicien/all', methods=['GET'])
 def test():
-    connexion = sqlite3.connect('../DataAccess/maBase.db')
-    connexion.row_factory = dict_factory
-    curseur = connexion.cursor()
-    technicien = curseur.execute('SELECT * FROM technicien;').fetchall()
-
-    return jsonify(technicien)
+    return jsonify(technicienRepository.selectTechnicien())
 
 
 @app.route(f'/api/technicien', methods=['GET'])
@@ -30,23 +29,10 @@ def getOneTechnicien():
 
     id = query_parameters.get('id')
 
-    query = "SELECT * FROM technicien WHERE"
-    to_filter = []
-
-    if id:
-        query += ' id_tec = ?'
-        to_filter.append(id)
-
     if not id:
         return "Vous avez oubliez de rentrer un id ou soit le technicien n'existe pas"
 
-    conn = sqlite3.connect('../DataAccess/maBase.db')
-    conn.row_factory = dict_factory
-    cur = conn.cursor()
-
-    results = cur.execute(query, to_filter).fetchall()
-
-    return jsonify(results)
+    return jsonify(technicienRepository.selectTechnicienById(id))
 
 
 @app.route(f'/api/technicien/intervention', methods=['GET'])
@@ -55,33 +41,15 @@ def getTechnicienIntervention():
 
     id = query_parameters.get('id')
 
-    query = "SELECT * FROM intervention WHERE"
-    to_filter = []
-
-    if id:
-        query += ' id_tec = ?'
-        to_filter.append(id)
-
     if not id:
         return "Vous avez oubliez de rentrer un id ou soit le technicien n'existe pas"
 
-    conn = sqlite3.connect('../DataAccess/maBase.db')
-    conn.row_factory = dict_factory
-    cur = conn.cursor()
-
-    results = cur.execute(query, to_filter).fetchall()
-    print(query)
-    return jsonify(results)
+    return jsonify(intervientionRepository.selectInterventionByIdTec(id))
 
 
 @app.route('/api/intervention/all', methods=['GET'])
 def getIntervention():
-    connexion = sqlite3.connect('../DataAccess/maBase.db')
-    connexion.row_factory = dict_factory
-    curseur = connexion.cursor()
-    intervention = curseur.execute('SELECT * FROM intervention;').fetchall()
-
-    return jsonify(intervention)
+    return jsonify(intervientionRepository.selectIntervention())
 
 
 @app.route(f'/api/intervention', methods=['GET'])
@@ -91,24 +59,55 @@ def getOneIntervention():
 
     id = query_parameters.get('id')
 
-    query = "SELECT * FROM intervention WHERE"
-    to_filter = []
-
-    if id:
-        query += ' id_int = ?'
-        to_filter.append(id)
-
     if not id:
         return "Vous avez oubliez de rentrer un id ou soit l'intervention est n'existe pas"
 
-    conn = sqlite3.connect('../DataAccess/maBase.db')
-    conn.row_factory = dict_factory
-    cur = conn.cursor()
+    return jsonify(intervientionRepository.selectInterventionById(id))
 
-    results = cur.execute(query, to_filter).fetchall()
-    print(query)
-    return jsonify(results)
 
+
+@app.route(f'/api/intervention', methods=['POST'])
+def createIntervention():
+
+    id_tec = request.form.get('id_tec')
+    piece = request.form.get('piece')
+    probleme = request.form.get('probleme')
+
+    if not id_tec:
+        return "Vous avez oubliez de rentrer un id ou soit le technicien n'existe pas"
+
+    if not piece:
+        return "Vous avez oubliez de rentrer la piece"
+
+    if not probleme:
+        return "Vous avez oubliez de rentrer un probleme"
+
+    intervention = Intervention(id_tec, piece, probleme)
+    intervientionRepository.insertIntervention(intervention)
+
+    return "OK"\
+
+@app.route(f'/api/technicien', methods=['POST'])
+def createTechnicien():
+
+    nom = request.form.get('nom')
+    prenom = request.form.get('prenom')
+
+    if not nom:
+        return "Vous avez oubliez de rentrer le nom du technicien"
+
+    if not prenom:
+        return "Vous avez oubliez de rentrer le prenom du technicien"
+
+    technicien = Technicien(nom, prenom)
+    technicienRepository.insertTechnicien(technicien)
+
+    return "OK"
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return "<h1>404</h1><p>Il y a une erreur dans l'url.</p>", 404
 
 @app.errorhandler(404)
 def page_not_found(e):

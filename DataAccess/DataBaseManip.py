@@ -1,5 +1,8 @@
 import sqlite3
 import os
+import json
+
+from definitions import DB_PATH
 from entities.intervention import Intervention
 from entities.technicien import Technicien
 from repositories.technicienRepository import technicienRepository
@@ -10,8 +13,8 @@ def CreationBDD():
     try:
         # Connexion BDD ----------------------------------------------------------
 
-        os.remove("maBase.db")
-        connexion = sqlite3.connect("maBase.db")
+        os.remove(DB_PATH)
+        connexion = sqlite3.connect(DB_PATH)
         curseur = connexion.cursor()
 
         # Create Table ----------------------------------------------------------
@@ -38,9 +41,11 @@ def CreationBDD():
 
         # SelectToTable ----------------------------------------------------------
 
-        intervientionRepository.selectIntervention()
+        resIntervention = intervientionRepository.selectIntervention()
+        print(json.dumps(resIntervention))
 
-        technicienRepository.selectTechnicien()
+        resTechnicien = technicienRepository.selectTechnicien()
+        print(json.dumps(resTechnicien))
 
     except Exception as exc:
         print(exc)
