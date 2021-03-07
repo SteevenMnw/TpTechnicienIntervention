@@ -37,7 +37,7 @@ class technicienRepository:
         curseur = connexion.cursor()
         sqlCreateTableTechnicien = f"CREATE TABLE IF NOT EXISTS technicien(" \
                                    f" id_tec INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE," \
-                                   f" nom INTEGER," \
+                                   f" nom VARCHAR," \
                                    f" prenom VARCHAR)"
 
         curseur.execute(sqlCreateTableTechnicien)
