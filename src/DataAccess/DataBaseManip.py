@@ -3,10 +3,10 @@ import os
 import json
 
 from definitions import DB_PATH
-from entities.intervention import Intervention
-from entities.technicien import Technicien
-from repositories.technicienRepository import technicienRepository
-from repositories.interventionRepository import intervientionRepository
+from src.entities.intervention import Intervention
+from src.entities.technicien import Technicien
+from src.repositories.technicienRepository import technicienRepository
+from src.repositories.interventionRepository import intervientionRepository
 
 
 def CreationBDD():
