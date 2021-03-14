@@ -1,7 +1,7 @@
 import sqlite3
 
 from definitions import DB_PATH
-from repositories.utils import dict_factory
+from src.repositories.utils import dict_factory
 
 
 class intervientionRepository:
